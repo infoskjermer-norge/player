@@ -53,11 +53,8 @@ const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 1000,
     height: 800,
-    nodeIntegration: false, // when this is true, it caused some issues with jquery
-    webSecurity: false,
-    allowDisplayingInsecureContent: true,
-    allowRunningInsecureContent: true,
     webPreferences : {
+      nodeIntegration: false, // when this is true, it caused some issues with jquery
       webSecurity: false,
       allowDisplayingInsecureContent: true,
       allowRunningInsecureContent: true,
