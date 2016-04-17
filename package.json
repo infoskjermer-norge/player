@@ -1,29 +1,22 @@
 {
-  "name": "electron-quick-start",
-  "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "name": "infoskjermer-player",
+  "version": "0.1.0",
+  "description": "Infoskjermer Norge Player",
   "main": "main.js",
   "scripts": {
     "start": "electron main.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/atom/electron-quick-start.git"
+    "url": "git+https://github.com/christofferok/infoskjermer-player.git"
   },
   "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial"
   ],
-  "author": "GitHub",
+  "author": "Infoskjermer Norge AS",
   "license": "CC0-1.0",
-  "bugs": {
-    "url": "https://github.com/atom/electron-quick-start/issues"
-  },
-  "homepage": "https://github.com/atom/electron-quick-start#readme",
+  "homepage": "http://infoskjermer-norge.no",
   "devDependencies": {
-    "electron-prebuilt": "^0.36.0"
+    "electron-prebuilt": "^0.37.6"
   },
   "dependencies": {
     "body-parser": "^1.15.0",
