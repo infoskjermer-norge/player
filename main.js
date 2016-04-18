@@ -12,7 +12,6 @@ const os = require('os');
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
-const dialog = electron.dialog;
 const URL = require('url');
 
 const CacheServer = require('./cache-server');
@@ -24,7 +23,6 @@ const isOnline = require('is-online');
 const localFileDest = __dirname+'/localFiles';
 
 let mainWindow;
-let configWindow;
 
 
 cacheServer.on('cache-start', (files) => {
@@ -92,21 +90,6 @@ const createWindow = () => {
 }
 
 
-const createConfigWindow = () => {
-  configWindow = new BrowserWindow({
-    width: 500,
-    height: 350,
-  });
-
-  configWindow.loadURL('file://' + __dirname + '/config.html');
-
-  configWindow.on('closed', () => {
-    configWindow = null;
-  });
-
-  //configWindow.webContents.openDevTools();
-
-}
 
 // Quit when all windows are closed.
 app.on('window-all-closed', () => {
@@ -126,8 +109,6 @@ app.on('activate', () => {
 });
 
 app.on('ready', () => {
-
-  createConfigWindow();
 
   cacheServer.start().then(() => {
     createWindow();

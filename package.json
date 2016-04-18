@@ -4,7 +4,8 @@
   "description": "Infoskjermer Norge Player",
   "main": "main.js",
   "scripts": {
-    "start": "electron main.js"
+    "start": "electron main.js",
+    "config": "electron config.js"
   },
   "repository": {
     "type": "git",

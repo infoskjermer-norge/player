@@ -2,7 +2,7 @@
     "player": {
         "server": "https://dev.infoskjermer-norge.no",
         "client_id": "e07587fe-e92a-450b-b825-b0cd64c4ea5c",
-        "kiosk": false,
+        "kiosk": true,
         "devtools": false
     },
     "socket": {
