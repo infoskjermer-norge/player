@@ -2,12 +2,9 @@
 
 const config = require('./config.json');
 
-
-const os = require('os');
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
-const dialog = electron.dialog;
 
 let configWindow;
 
