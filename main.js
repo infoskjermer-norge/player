@@ -4,7 +4,7 @@ const config = require('./config.json');
 
 // Reporting to Sentry
 const raven = require('raven');
-const client = new raven.Client('https://36e0715b804f4e87bf84ddb9b3fa5297:9fc817cb91b94c8ba191403a1738558e@app.getsentry.com/54641');
+const client = new raven.Client(config.sentryUrl);
 client.patchGlobal();
 client.setUserContext(config.player);
 
@@ -20,7 +20,6 @@ const cacheServer = new CacheServer(config.cache);
 
 const exec = require('child_process').exec;
 const isOnline = require('is-online');
-
 
 const localFileDest = __dirname+'/localFiles';
 
@@ -52,14 +51,15 @@ const createWindow = () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 1000,
-    height: 800,
+    height: 700,
+    backgroundColor: "#000000",
     webPreferences : {
       nodeIntegration: false, // when this is true, it caused some issues with jquery
       webSecurity: false,
       allowDisplayingInsecureContent: true,
       allowRunningInsecureContent: true,
     },
-    //kiosk: true,
+    kiosk: config.player.kiosk,
   });
 
   // and load the index.html of the app.
@@ -81,14 +81,12 @@ const createWindow = () => {
     });*/
   });
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  if(config.player.devtools){
+    // Open the DevTools.
+    mainWindow.webContents.openDevTools();
+  }
 
-  // Emitted when the window is closed.
   mainWindow.on('closed', () => {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
     mainWindow = null;
   });
 }
@@ -136,6 +134,38 @@ app.on('ready', () => {
   });
 
 });
+
+
+
+
+
+/* Connection to websocket server */
+const socket = require('socket.io-client')(config.socket.server);
+socket.on('connect', () => {
+    socket.emit('identify', { client_id: config.player.client_id });
+});
+socket.on('disconnect', () => {
+
+});
+socket.on('private', (data) => {
+
+  console.log("private", data);
+
+  if(data.type == 'restart'){
+    // TODO: Maybe restart the entire app, not just the browser window?
+    mainWindow.close();
+    createWindow();
+  }
+  else if(data.type == 'updated_content'){
+    // TDOO:
+    // 1. Download new content in the background
+    mainWindow.close();
+    createWindow();
+  }
+
+});
+
+
 
 
 

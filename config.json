@@ -1,11 +1,17 @@
 {
     "player": {
         "server": "https://dev.infoskjermer-norge.no",
-        "client_id": "e07587fe-e92a-450b-b825-b0cd64c4ea5c"
+        "client_id": "e07587fe-e92a-450b-b825-b0cd64c4ea5c",
+        "kiosk": false,
+        "devtools": false
+    },
+    "socket": {
+        "server": "https://dev.infoskjermer-norge.no:3000"
     },
     "cache": {
         "host": "http://localhost",
         "port": 3000,
         "fileDestination": "/files/"
-    }
+    },
+    "sentryUrl": "https://36e0715b804f4e87bf84ddb9b3fa5297:9fc817cb91b94c8ba191403a1738558e@app.getsentry.com/54641"
 }

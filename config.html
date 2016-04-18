@@ -12,11 +12,16 @@
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('player_server').value = config.player.server;
         document.getElementById('player_client_id').value = config.player.client_id;
+        document.getElementById('player_kiosk').checked = config.player.kiosk;
+        document.getElementById('player_devtools').checked = config.player.devtools;
     }, false);
 
     function saveConfig(){
         config.player.server = document.getElementById('player_server').value;
         config.player.client_id = document.getElementById('player_client_id').value;
+        config.player.kiosk = document.getElementById('player_kiosk').checked;
+        config.player.devtools = document.getElementById('player_devtools').checked;
+
         console.log("Saving config...", config);
         fs.writeFile(__dirname+'/config.json', JSON.stringify(config, null, "    "), (err) => {
           if (err) alert("ERROR: Something went wrong when saving config");
@@ -34,7 +39,7 @@
     *{
 
     }
-    input{
+    input[type=text]{
         width: 100%;
         font-size:1em;
     }
@@ -52,6 +57,17 @@
     <p>
         <input id="player_client_id" type="text" placeholder="Client ID" value="">
     </p>
+    <p>
+        <label>
+            <input id="player_kiosk" type="checkbox" value="1"> Kiosk
+        </label>
+    </p>
+    <p>
+        <label>
+            <input id="player_devtools" type="checkbox" value="1"> Developer Tools
+        </label>
+    </p>
+
 
     <p>
         <button onclick="saveConfig();">Save</button>
