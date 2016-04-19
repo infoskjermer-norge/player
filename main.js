@@ -24,7 +24,6 @@ const localFileDest = __dirname+'/localFiles';
 
 let mainWindow;
 
-
 cacheServer.on('cache-start', (files) => {
   console.log('cache-start');
 });
@@ -42,9 +41,7 @@ cacheServer.on('cache-hit', (data) => {
 
 const createWindow = () => {
 
-
   if(config.player.client_id ===  null) return;
-
 
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -80,7 +77,6 @@ const createWindow = () => {
   });
 
   if(config.player.devtools){
-    // Open the DevTools.
     mainWindow.webContents.openDevTools();
   }
 
@@ -91,23 +87,16 @@ const createWindow = () => {
 
 
 
-// Quit when all windows are closed.
 app.on('window-all-closed', () => {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
   if (process.platform !== 'darwin') {
     app.quit();
   }
 });
-
 app.on('activate', () => {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
   if (mainWindow === null) {
     createWindow();
   }
 });
-
 app.on('ready', () => {
 
   cacheServer.start().then(() => {
@@ -138,10 +127,14 @@ socket.on('private', (data) => {
     createWindow();
   }
   else if(data.type == 'updated_content'){
-    // TDOO:
-    // 1. Download new content in the background
-    mainWindow.close();
-    createWindow();
+    console.log("Downloading resources in the background, then updating the player");
+    downloadResources(config.player.server+'/player-electron/'+config.player.client_id).then((url) => {
+      mainWindow.loadURL('file://'+localFileDest+'/player-electron/player.html');
+      console.log("Trying to restart the slideshow");
+      // TODO: Maybe we need to just restart the entire window to get the cache events, etc?
+    }).catch((err) => {
+      console.log("Couldn't download resources");
+    });
   }
 
 });
@@ -151,7 +144,7 @@ socket.on('private', (data) => {
 
 
 
-const downloadResources = (url) => {
+const downloadResources = (playerURL) => {
 
   return new Promise((resolve, reject) => {
     isOnline(function(err, online) {
@@ -168,9 +161,9 @@ const downloadResources = (url) => {
         // --no-host-directories: don't create a separate directory for the host
         // --no-verbose : don't give so much output
         // --dns-timeout=<seconds> : number of seconds before giving up on resolving the dns
-        let urlObj = URL.parse(url);
+        let urlObj = URL.parse(playerURL);
         let domains = urlObj.hostname;
-        let cmd = 'wget -e robots=off --mirror --convert-links -p --no-check-certificate --follow-tags=link,script,style --domains='+domains+' --no-host-directories --no-verbose --dns-timeout=30 -P '+localFileDest+' "'+url+'"';
+        let cmd = 'wget -e robots=off --mirror --convert-links -p --no-check-certificate --follow-tags=link,script,style --domains='+domains+' --no-host-directories --no-verbose --dns-timeout=30 -P '+localFileDest+' "'+playerURL+'"';
         let playerFile = urlObj.pathname.substr(urlObj.pathname.lastIndexOf('/')+1);
         cmd += '; mv '+localFileDest+'/player-electron/'+playerFile+' '+localFileDest+'/player-electron/player.html';
         console.log('running cmd: ', cmd);
@@ -181,9 +174,9 @@ const downloadResources = (url) => {
             reject(err);
             return;
           }
-          console.log(err, stdout, stderr);
-          console.log("- DONE downloading", url);
-          resolve(url);
+          //console.log(err, stdout, stderr);
+          console.log("- DONE downloading", playerURL);
+          resolve(playerURL);
           return;
         });
     });
