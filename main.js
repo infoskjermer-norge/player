@@ -9,6 +9,7 @@ client.patchGlobal();
 client.setUserContext(config.player);
 
 const os = require('os');
+const https = require('https');
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
@@ -23,6 +24,7 @@ const isOnline = require('is-online');
 const localFileDest = __dirname+'/localFiles';
 
 let mainWindow;
+let lastContentFetch = null;
 
 cacheServer.on('cache-start', (files) => {
   console.log('cache-start');
@@ -108,6 +110,57 @@ app.on('ready', () => {
 
 
 
+function hasContentBeenUpdated(){
+
+  let url = URL.parse(config.player.server);
+
+  let options = {
+    hostname: url.host,
+    path: '/api/client/'+config.player.client_id+'/lastUpdated',
+    method: 'GET',
+    headers: {
+      'Authorization': 'Token '+config.apiToken,
+      'Content-Type': 'application/json'
+    }
+  };
+
+  return new Promise((resolve, reject) => {
+    let req = https.request(options, (res) => {
+      let body = '';
+      res.setEncoding('utf8');
+      res.on('data', (chunk) => {
+        body += chunk;
+      });
+      res.on('end', () => {
+        if(res.statusCode == 200){
+          console.log("Finished webhook call: ", body);
+          let jsonBody = JSON.parse(body);
+          let updated_at = new Date(jsonBody.updated_at);
+          if(updated_at > lastContentFetch) resolve(true);
+          else resolve(false);
+        }
+        else reject(new Error(body));
+      });
+    });
+
+    req.on('error', (e) => {
+      reject(e);
+    });
+    req.end();
+  });
+}
+
+
+function contentHasBeenUpdated(){
+  console.log("Downloading resources in the background, then updating the player");
+  downloadResources(config.player.server+'/player-electron/'+config.player.client_id).then((url) => {
+    mainWindow.loadURL('file://'+localFileDest+'/player-electron/player.html');
+    console.log("Trying to restart the slideshow");
+    // TODO: Maybe we need to just restart the entire window to get the cache events, etc?
+  }).catch((err) => {
+    console.log("Couldn't download resources");
+  });
+}
 
 /* Connection to websocket server */
 const socket = require('socket.io-client')(config.socket.server);
@@ -115,7 +168,19 @@ socket.on('connect', () => {
     socket.emit('identify', { client_id: config.player.client_id });
 });
 socket.on('disconnect', () => {
+  console.log("Disconnected from the hub");
+});
 
+socket.on('reconnect', () => {
+  console.log("Just reconnected, time to check for new content");
+  hasContentBeenUpdated().then((result) => {
+    console.log("Has content been updated? ", result);
+
+    if(result === true) contentHasBeenUpdated();
+
+  }).catch((error) => {
+    console.log("Error checking for new content", error);
+  });
 });
 socket.on('private', (data) => {
 
@@ -127,14 +192,7 @@ socket.on('private', (data) => {
     createWindow();
   }
   else if(data.type == 'updated_content'){
-    console.log("Downloading resources in the background, then updating the player");
-    downloadResources(config.player.server+'/player-electron/'+config.player.client_id).then((url) => {
-      mainWindow.loadURL('file://'+localFileDest+'/player-electron/player.html');
-      console.log("Trying to restart the slideshow");
-      // TODO: Maybe we need to just restart the entire window to get the cache events, etc?
-    }).catch((err) => {
-      console.log("Couldn't download resources");
-    });
+    contentHasBeenUpdated();
   }
 
 });
@@ -177,6 +235,7 @@ const downloadResources = (playerURL) => {
           //console.log(err, stdout, stderr);
           console.log("- DONE downloading", playerURL);
           resolve(playerURL);
+          lastContentFetch = new Date();
           return;
         });
     });
