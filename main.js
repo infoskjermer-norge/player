@@ -62,12 +62,15 @@ const createWindow = () => {
   // and load the index.html of the app.
   mainWindow.loadURL('file://'+__dirname+'/loading.html');
 
-  downloadResources(config.player.server+'/player-electron/'+config.player.client_id).then((url) => {
-    console.log("Should start the player");
-    mainWindow.loadURL('file://'+localFileDest+'/player-electron/player.html');
-  }).catch((err) => {
-    console.log("-------- don't have internet");
-    mainWindow.loadURL('file://'+localFileDest+'/player-electron/player.html');
+  mainWindow.on('unresponsive', (e) => {
+    mainWindow.reload();
+  });
+
+  mainWindow.webContents.on('crashed', function() {
+    mainWindow.reload();
+  });
+  mainWindow.webContents.on('plugin-crashed', function() {
+    mainWindow.reload();
   });
 
 
@@ -84,6 +87,14 @@ const createWindow = () => {
 
   mainWindow.on('closed', () => {
     mainWindow = null;
+  });
+
+  downloadResources(config.player.server+'/player-electron/'+config.player.client_id).then((url) => {
+    console.log("Should start the player");
+    mainWindow.loadURL('file://'+localFileDest+'/player-electron/player.html');
+  }).catch((err) => {
+    console.log("-------- don't have internet");
+    mainWindow.loadURL('file://'+localFileDest+'/player-electron/player.html');
   });
 }
 
