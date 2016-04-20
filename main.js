@@ -63,15 +63,24 @@ const createWindow = () => {
   mainWindow.loadURL('file://'+__dirname+'/loading.html');
 
   mainWindow.on('unresponsive', (e) => {
-    mainWindow.reload();
+    mainWindow.close();
+    createWindow();
   });
 
   mainWindow.webContents.on('crashed', function() {
-    mainWindow.reload();
+    mainWindow.close();
+    createWindow();
   });
   mainWindow.webContents.on('plugin-crashed', function() {
-    mainWindow.reload();
+    mainWindow.close();
+    createWindow();
   });
+  mainWindow.webContents.on('did-fail-load', function() {
+    mainWindow.close();
+    createWindow();
+  });
+
+
 
 
 
