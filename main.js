@@ -146,6 +146,12 @@ app.on('ready', () => {
   playerInfo = {
     electron_version: app.getVersion(),
     app_version: packageInfo.version,
+    os: {
+      freemem: os.freemem(),
+      totalmem: os.totalmem(),
+      uptime: os.uptime(),
+      platform: os.platform(),
+    },
     display: {
       width: primaryDisplay.size.width,
       height: primaryDisplay.size.height,
