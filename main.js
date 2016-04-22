@@ -1,7 +1,6 @@
 'use strict';
 
 const config = require('./config.json');
-console.log(config);
 const packageInfo = require('./package.json');
 
 if(config.logToSentry){
