@@ -27,6 +27,7 @@ const localFileDest = __dirname+'/localFiles';
 
 let mainWindow;
 let lastContentFetch = null;
+let playerInfo = null;
 
 const shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
   // Someone tried to run a second instance, we should focus our window.
@@ -137,11 +138,65 @@ app.on('activate', () => {
 });
 app.on('ready', () => {
 
+  const electronScreen = electron.screen;
+
+  let primaryDisplay = electronScreen.getPrimaryDisplay();
+
+  playerInfo = {
+    electron_version: app.getVersion(),
+    display: {
+      width: primaryDisplay.size.width,
+      height: primaryDisplay.size.height,
+      scaleFactor: primaryDisplay.scaleFactor,
+      touchSupport: primaryDisplay.touchSupport,
+    }
+  };
+
+  startHubConnection();
+
   cacheServer.start().then(() => {
     createWindow();
   });
 
 });
+
+
+function startHubConnection(){
+  /* Connection to websocket server */
+  const socket = require('socket.io-client')(config.socket.server);
+  socket.on('connect', () => {
+      socket.emit('identify', { client_id: config.player.client_id, playerInfo: playerInfo });
+  });
+  socket.on('disconnect', () => {
+    console.log("Disconnected from the hub");
+  });
+
+  socket.on('reconnect', () => {
+    console.log("Just reconnected, time to check for new content");
+    hasContentBeenUpdated().then((result) => {
+      console.log("Has content been updated? ", result);
+
+      if(result === true) contentHasBeenUpdated();
+
+    }).catch((error) => {
+      console.log("Error checking for new content", error);
+    });
+  });
+  socket.on('private', (data) => {
+
+    console.log("private", data);
+
+    if(data.type == 'restart'){
+      // TODO: Maybe restart the entire app, not just the browser window?
+      mainWindow.close();
+      createWindow();
+    }
+    else if(data.type == 'updated_content'){
+      contentHasBeenUpdated();
+    }
+
+  });
+}
 
 
 
@@ -197,44 +252,6 @@ function contentHasBeenUpdated(){
     console.log("Couldn't download resources");
   });
 }
-
-/* Connection to websocket server */
-const socket = require('socket.io-client')(config.socket.server);
-socket.on('connect', () => {
-    socket.emit('identify', { client_id: config.player.client_id });
-});
-socket.on('disconnect', () => {
-  console.log("Disconnected from the hub");
-});
-
-socket.on('reconnect', () => {
-  console.log("Just reconnected, time to check for new content");
-  hasContentBeenUpdated().then((result) => {
-    console.log("Has content been updated? ", result);
-
-    if(result === true) contentHasBeenUpdated();
-
-  }).catch((error) => {
-    console.log("Error checking for new content", error);
-  });
-});
-socket.on('private', (data) => {
-
-  console.log("private", data);
-
-  if(data.type == 'restart'){
-    // TODO: Maybe restart the entire app, not just the browser window?
-    mainWindow.close();
-    createWindow();
-  }
-  else if(data.type == 'updated_content'){
-    contentHasBeenUpdated();
-  }
-
-});
-
-
-
 
 
 
