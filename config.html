@@ -19,10 +19,10 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('player_server').value = playerConfig.server;
-        document.getElementById('player_client_id').value = playerConfig.client_id;
-        document.getElementById('player_kiosk').checked = playerConfig.kiosk;
-        document.getElementById('player_devtools').checked = playerConfig.devtools;
+        document.getElementById('player_server').value = playerConfig.server || '';
+        document.getElementById('player_client_id').value = playerConfig.client_id || '';
+        document.getElementById('player_kiosk').checked = playerConfig.kiosk || true;
+        document.getElementById('player_devtools').checked = playerConfig.devtools || false;
     }, false);
 
     function saveConfig(){
