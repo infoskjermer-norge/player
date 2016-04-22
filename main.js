@@ -23,6 +23,11 @@ const configWindow = require('./configWindow');
 const storageDir = app.getPath('home') + '/' + config.storageDir;
 const localFileDest = storageDir+'/localFiles';
 
+// Make app file destination in case it doesn't exist yet
+try{
+  fs.mkdirSync(storageDir);
+} catch(e) { /* Dont need to do anything */ }
+
 const CacheServer = require('./cache-server');
 config.cache.fileDestination = storageDir + '/' + config.cache.fileDestination;
 const cacheServer = new CacheServer(config.cache);
