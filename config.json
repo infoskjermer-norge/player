@@ -10,6 +10,6 @@
     },
     "storageDir": "infoskjermer-player-files",
     "apiToken": "testToken",
-    "logToSentry": false,
+    "logToSentry": true,
     "sentryUrl": "https://36e0715b804f4e87bf84ddb9b3fa5297:9fc817cb91b94c8ba191403a1738558e@app.getsentry.com/54641"
 }
