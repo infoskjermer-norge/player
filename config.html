@@ -33,7 +33,10 @@
 
         console.log("Saving config...", playerConfig);
         fs.writeFile(playerConfigFilename, JSON.stringify(playerConfig, null, "    "), (err) => {
-          if (err) alert("ERROR: Something went wrong when saving config");
+          if (err){
+            throw err;
+            alert("ERROR: Something went wrong when saving config");
+          }
           else alert("Config saved");
         });
     }
