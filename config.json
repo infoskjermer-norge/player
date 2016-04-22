@@ -13,6 +13,7 @@
         "port": 3000,
         "fileDestination": "/files/"
     },
+    "debug": false,
     "apiToken": "testToken",
     "sentryUrl": "https://36e0715b804f4e87bf84ddb9b3fa5297:9fc817cb91b94c8ba191403a1738558e@app.getsentry.com/54641"
 }

@@ -2,11 +2,13 @@
 
 const config = require('./config.json');
 
-// Reporting to Sentry
-const raven = require('raven');
-const client = new raven.Client(config.sentryUrl);
-client.patchGlobal();
-client.setUserContext(config.player);
+if(config.debug){
+  // Reporting to Sentry
+  const raven = require('raven');
+  const client = new raven.Client(config.sentryUrl);
+  client.patchGlobal();
+  client.setUserContext(config.player);
+}
 
 const os = require('os');
 const https = require('https');
