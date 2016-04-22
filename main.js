@@ -1,34 +1,99 @@
 'use strict';
 
 const config = require('./config.json');
+console.log(config);
 const packageInfo = require('./package.json');
 
-if(config.debug){
+if(config.logToSentry){
   // Reporting to Sentry
   const raven = require('raven');
   const client = new raven.Client(config.sentryUrl);
   client.patchGlobal();
-  client.setUserContext(config.player);
+  client.setUserContext(playerConfig);
 }
 
 const os = require('os');
+const fs = require('fs');
 const https = require('https');
 const electron = require('electron');
 const app = electron.app;
 const BrowserWindow = electron.BrowserWindow;
 const URL = require('url');
+const configWindow = require('./configWindow');
+
+const storageDir = app.getPath('home') + '/' + config.storageDir;
+const localFileDest = storageDir+'/localFiles';
 
 const CacheServer = require('./cache-server');
+config.cache.fileDestination = storageDir + '/' + config.cache.fileDestination;
 const cacheServer = new CacheServer(config.cache);
 
 const exec = require('child_process').exec;
 const isOnline = require('is-online');
 
-const localFileDest = __dirname+'/localFiles';
 
+let playerConfig = null;
 let mainWindow;
 let lastContentFetch = null;
 let playerInfo = null;
+
+app.on('window-all-closed', () => {
+  app.quit();
+});
+app.on('activate', () => {
+  if (mainWindow === null) {
+    createWindow();
+  }
+});
+app.on('ready', () => {
+
+  try {
+    playerConfig = require(storageDir+'/config.json');
+  } catch(e) {
+    console.log("Could not find config file");
+  }
+
+  let configFlagSet = false;
+  process.argv.forEach((val, index, array) => {
+    if(val == "--config") configFlagSet = true;
+  });
+
+  if(playerConfig == null || !playerConfig.client_id || configFlagSet){
+    configWindow.open();
+    return;
+  }
+
+  // If player server har been overrided
+  if(playerConfig.server) config.server = playerConfig.server;
+
+  const electronScreen = electron.screen;
+
+  let primaryDisplay = electronScreen.getPrimaryDisplay();
+
+  playerInfo = {
+    electron_version: app.getVersion(),
+    app_version: packageInfo.version,
+    os: {
+      freemem: os.freemem(),
+      totalmem: os.totalmem(),
+      uptime: os.uptime(),
+      platform: os.platform(),
+    },
+    display: {
+      width: primaryDisplay.size.width,
+      height: primaryDisplay.size.height,
+      scaleFactor: primaryDisplay.scaleFactor,
+      touchSupport: primaryDisplay.touchSupport,
+    }
+  };
+
+  startHubConnection();
+
+  cacheServer.start().then(() => {
+    createWindow();
+  });
+
+});
 
 const shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
   // Someone tried to run a second instance, we should focus our window.
@@ -61,7 +126,7 @@ cacheServer.on('cache-hit', (data) => {
 
 const createWindow = () => {
 
-  if(config.player.client_id ===  null) return;
+  if(playerConfig.client_id === null) return;
 
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -74,7 +139,7 @@ const createWindow = () => {
       allowDisplayingInsecureContent: true,
       allowRunningInsecureContent: true,
     },
-    kiosk: config.player.kiosk,
+    kiosk: playerConfig.kiosk,
   });
 
   // and load the index.html of the app.
@@ -108,7 +173,7 @@ const createWindow = () => {
     });*/
   });
 
-  if(config.player.devtools){
+  if(playerConfig.devtools){
     mainWindow.webContents.openDevTools();
   }
 
@@ -116,7 +181,7 @@ const createWindow = () => {
     mainWindow = null;
   });
 
-  downloadResources(config.player.server+'/player-electron/'+config.player.client_id).then((url) => {
+  downloadResources(config.server+'/player-electron/'+playerConfig.client_id).then((url) => {
     console.log("Should start the player");
     mainWindow.loadURL('file://'+localFileDest+'/player-electron/player.html');
   }).catch((err) => {
@@ -127,53 +192,13 @@ const createWindow = () => {
 
 
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
-});
-app.on('activate', () => {
-  if (mainWindow === null) {
-    createWindow();
-  }
-});
-app.on('ready', () => {
-
-  const electronScreen = electron.screen;
-
-  let primaryDisplay = electronScreen.getPrimaryDisplay();
-
-  playerInfo = {
-    electron_version: app.getVersion(),
-    app_version: packageInfo.version,
-    os: {
-      freemem: os.freemem(),
-      totalmem: os.totalmem(),
-      uptime: os.uptime(),
-      platform: os.platform(),
-    },
-    display: {
-      width: primaryDisplay.size.width,
-      height: primaryDisplay.size.height,
-      scaleFactor: primaryDisplay.scaleFactor,
-      touchSupport: primaryDisplay.touchSupport,
-    }
-  };
-
-  startHubConnection();
-
-  cacheServer.start().then(() => {
-    createWindow();
-  });
-
-});
 
 
 function startHubConnection(){
   /* Connection to websocket server */
   const socket = require('socket.io-client')(config.socket.server);
   socket.on('connect', () => {
-      socket.emit('identify', { client_id: config.player.client_id, playerInfo: playerInfo });
+      socket.emit('identify', { client_id: playerConfig.client_id, playerInfo: playerInfo });
   });
   socket.on('disconnect', () => {
     console.log("Disconnected from the hub");
@@ -211,11 +236,11 @@ function startHubConnection(){
 
 function hasContentBeenUpdated(){
 
-  let url = URL.parse(config.player.server);
+  let url = URL.parse(config.server);
 
   let options = {
     hostname: url.host,
-    path: '/api/client/'+config.player.client_id+'/lastUpdated',
+    path: '/api/client/'+playerConfig.client_id+'/lastUpdated',
     method: 'GET',
     headers: {
       'Authorization': 'Token '+config.apiToken,
@@ -252,7 +277,7 @@ function hasContentBeenUpdated(){
 
 function contentHasBeenUpdated(){
   console.log("Downloading resources in the background, then updating the player");
-  downloadResources(config.player.server+'/player-electron/'+config.player.client_id).then((url) => {
+  downloadResources(config.server+'/player-electron/'+playerConfig.client_id).then((url) => {
     mainWindow.loadURL('file://'+localFileDest+'/player-electron/player.html');
     console.log("Trying to restart the slideshow");
     // TODO: Maybe we need to just restart the entire window to get the cache events, etc?

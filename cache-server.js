@@ -21,6 +21,12 @@ module.exports = class CacheServer extends EventEmitter{
 
         this.server = null;
 
+        // Make file destination in case it doesn't exist yet
+        try{
+          fs.mkdirSync(this.config.fileDestination);
+        } catch(e) { /* Dont need to do anything */ }
+
+
         this.app.use(bodyParser.json());
 
         // Add CORS headers
@@ -57,7 +63,7 @@ module.exports = class CacheServer extends EventEmitter{
             this.emit('cache-start', files);
 
             for(let i = 0; i < files.length; i++){
-                promises.push(this.downloadIfNotExsist(files[i], __dirname + this.config.fileDestination));
+                promises.push(this.downloadIfNotExsist(files[i], this.config.fileDestination));
             }
 
             Promise.all(promises).then((results) => {
@@ -85,7 +91,7 @@ module.exports = class CacheServer extends EventEmitter{
         this.app.get('/file/:name', (req, res, next) => {
 
             let options = {
-                root: __dirname + this.config.fileDestination,
+                root: this.config.fileDestination,
                 dotfiles: 'deny',
                 headers: {
                     'x-timestamp': Date.now(),

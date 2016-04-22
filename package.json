@@ -6,7 +6,7 @@
   "main": "main.js",
   "scripts": {
     "start": "electron main.js",
-    "config": "electron config.js"
+    "config": "electron main.js --config"
   },
   "repository": {
     "type": "git",
