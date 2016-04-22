@@ -26,6 +26,20 @@ const localFileDest = __dirname+'/localFiles';
 let mainWindow;
 let lastContentFetch = null;
 
+const shouldQuit = app.makeSingleInstance(function(commandLine, workingDirectory) {
+  // Someone tried to run a second instance, we should focus our window.
+  if (mainWindow) {
+    if (mainWindow.isMinimized()) mainWindow.restore();
+    mainWindow.focus();
+  }
+  return true;
+});
+
+if (shouldQuit) {
+  app.quit();
+  return;
+}
+
 cacheServer.on('cache-start', (files) => {
   console.log('cache-start');
 });
