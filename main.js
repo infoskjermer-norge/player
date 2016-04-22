@@ -1,6 +1,7 @@
 'use strict';
 
 const config = require('./config.json');
+const packageInfo = require('./package.json');
 
 if(config.debug){
   // Reporting to Sentry
@@ -144,6 +145,7 @@ app.on('ready', () => {
 
   playerInfo = {
     electron_version: app.getVersion(),
+    app_version: packageInfo.version,
     display: {
       width: primaryDisplay.size.width,
       height: primaryDisplay.size.height,
