@@ -6,9 +6,8 @@ const packageInfo = require('./package.json');
 if(config.logToSentry){
   // Reporting to Sentry
   const raven = require('raven');
-  const client = new raven.Client(config.sentryUrl);
-  client.patchGlobal();
-  client.setUserContext(playerConfig);
+  const ravenClient = new raven.Client(config.sentryUrl);
+  ravenClient.patchGlobal();
 }
 
 const os = require('os');
@@ -65,6 +64,10 @@ app.on('ready', () => {
   if(playerConfig == null || !playerConfig.client_id || configFlagSet){
     configWindow.open();
     return;
+  }
+
+  if(typeof ravenClient != 'undefined'){
+    ravenClient.setUserContext(playerConfig);
   }
 
   // If player server har been overrided
