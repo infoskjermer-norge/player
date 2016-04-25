@@ -63,42 +63,42 @@ app.on("ready", () => {
 
     if(playerConfig == null || !playerConfig.client_id || configFlagSet){
         configWindow.open();
-        return;
     }
-
-    if(ravenClient !== null){
-        ravenClient.setUserContext(playerConfig);
-    }
-
-  // If player server har been overrided
-    if(playerConfig.server) config.server = playerConfig.server;
-
-    const electronScreen = electron.screen;
-
-    let primaryDisplay = electronScreen.getPrimaryDisplay();
-
-    playerInfo = {
-        electron_version: app.getVersion(),
-        app_version: packageInfo.version,
-        os: {
-            freemem: os.freemem(),
-            totalmem: os.totalmem(),
-            uptime: os.uptime(),
-            platform: os.platform()
-        },
-        display: {
-            width: primaryDisplay.size.width,
-            height: primaryDisplay.size.height,
-            scaleFactor: primaryDisplay.scaleFactor,
-            touchSupport: primaryDisplay.touchSupport
+    else{
+        if(ravenClient !== null){
+            ravenClient.setUserContext(playerConfig);
         }
-    };
 
-    startHubConnection();
+        // If player server har been overrided
+        if(playerConfig.server) config.server = playerConfig.server;
 
-    cacheServer.start().then(() => {
-        createWindow();
-    });
+        const electronScreen = electron.screen;
+
+        let primaryDisplay = electronScreen.getPrimaryDisplay();
+
+        playerInfo = {
+            electron_version: app.getVersion(),
+            app_version: packageInfo.version,
+            os: {
+                freemem: os.freemem(),
+                totalmem: os.totalmem(),
+                uptime: os.uptime(),
+                platform: os.platform()
+            },
+            display: {
+                width: primaryDisplay.size.width,
+                height: primaryDisplay.size.height,
+                scaleFactor: primaryDisplay.scaleFactor,
+                touchSupport: primaryDisplay.touchSupport
+            }
+        };
+
+        startHubConnection();
+
+        cacheServer.start().then(() => {
+            createWindow();
+        });
+    }
 
 });
 
@@ -112,6 +112,7 @@ const shouldQuit = app.makeSingleInstance(() => {
 });
 
 if (shouldQuit) {
+    console.log("Quitting the app, because can only have one instance");
     app.quit();
 }
 
