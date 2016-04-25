@@ -103,12 +103,11 @@ app.on("ready", () => {
 });
 
 const shouldQuit = app.makeSingleInstance(() => {
-  // Someone tried to run a second instance, we should focus our window.
+    // Someone tried to run a second instance, we should focus our window.
     if (mainWindow) {
         if (mainWindow.isMinimized()) mainWindow.restore();
         mainWindow.focus();
     }
-    return true;
 });
 
 if (shouldQuit) {
