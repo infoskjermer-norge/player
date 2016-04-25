@@ -102,6 +102,7 @@ app.on("ready", () => {
 
 });
 
+/*
 const shouldQuit = app.makeSingleInstance(() => {
     // Someone tried to run a second instance, we should focus our window.
     if (mainWindow) {
@@ -114,6 +115,7 @@ if (shouldQuit) {
     console.log("Quitting the app, because can only have one instance");
     app.quit();
 }
+*/
 
 cacheServer.on("cache-start", () => {
     console.log("cache-start");
