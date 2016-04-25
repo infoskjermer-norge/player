@@ -1,12 +1,12 @@
-'use strict';
+"use strict";
 
-const https = require('https');
-const http = require('http');
-const express = require('express');
-const bodyParser = require('body-parser');
-const fs = require('fs');
-const URL = require('url');
-const EventEmitter = require('events');
+const https = require("https");
+const http = require("http");
+const express = require("express");
+const bodyParser = require("body-parser");
+const fs = require("fs");
+const URL = require("url");
+const EventEmitter = require("events");
 
 
 module.exports = class CacheServer extends EventEmitter{
@@ -23,7 +23,7 @@ module.exports = class CacheServer extends EventEmitter{
 
         // Make file destination in case it doesn't exist yet
         try{
-          fs.mkdirSync(this.config.fileDestination);
+            fs.mkdirSync(this.config.fileDestination);
         } catch(e) { /* Dont need to do anything */ }
 
 
@@ -33,17 +33,17 @@ module.exports = class CacheServer extends EventEmitter{
         this.app.use( (req, res, next) => {
 
             // Website you wish to allow to connect
-            res.setHeader('Access-Control-Allow-Origin', '*');
+            res.setHeader("Access-Control-Allow-Origin", "*");
 
             // Request methods you wish to allow
-            res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+            res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS, PUT, PATCH, DELETE");
 
             // Request headers you wish to allow
-            res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+            res.setHeader("Access-Control-Allow-Headers", "X-Requested-With,content-type");
 
             // Set to true if you need the website to include cookies in the requests sent
             // to the API (e.g. in case you use sessions)
-            res.setHeader('Access-Control-Allow-Credentials', true);
+            res.setHeader("Access-Control-Allow-Credentials", true);
 
             // Pass to next layer of middleware
             next();
@@ -51,16 +51,16 @@ module.exports = class CacheServer extends EventEmitter{
 
 
 
-        this.app.get('/', (req, res) => {
-            res.send('Hello World!');
+        this.app.get("/", (req, res) => {
+            res.send("Hello World!");
         });
 
-        this.app.post('/cache', (req, res) => {
+        this.app.post("/cache", (req, res) => {
 
             let files = req.body.files;
             let promises = [];
 
-            this.emit('cache-start', files);
+            this.emit("cache-start", files);
 
             for(let i = 0; i < files.length; i++){
                 promises.push(this.downloadIfNotExsist(files[i], this.config.fileDestination));
@@ -74,10 +74,10 @@ module.exports = class CacheServer extends EventEmitter{
                 //console.log("all cached files: ", cachedFiles);
 
 
-                this.emit('cache-finished', cachedFiles);
+                this.emit("cache-finished", cachedFiles);
 
             }).catch((error) => {
-                this.emit('cache-failed', files);
+                this.emit("cache-failed", files);
                 res.send(error).status(500);
             });
 
@@ -88,14 +88,14 @@ module.exports = class CacheServer extends EventEmitter{
         });
 
 
-        this.app.get('/file/:name', (req, res, next) => {
+        this.app.get("/file/:name", (req, res) => {
 
             let options = {
                 root: this.config.fileDestination,
-                dotfiles: 'deny',
+                dotfiles: "deny",
                 headers: {
-                    'x-timestamp': Date.now(),
-                    'x-sent': true
+                    "x-timestamp": Date.now(),
+                    "x-sent": true
                 }
             };
 
@@ -103,12 +103,12 @@ module.exports = class CacheServer extends EventEmitter{
             res.sendFile(fileName, options, (err) => {
                 if (err) {
                     //console.log(err);
-                    this.emit('cache-hit', { error: err, fileName });
+                    this.emit("cache-hit", { error: err, fileName });
                     res.status(err.status).end();
                 }
                 else {
                     //console.log('Sent:', fileName);
-                    this.emit('cache-hit', { error: null, fileName });
+                    this.emit("cache-hit", { error: null, fileName });
                 }
             });
 
@@ -143,11 +143,11 @@ module.exports = class CacheServer extends EventEmitter{
             url = URL.parse(url);
 
             if(dest_folder == undefined){
-                dest_folder = '.';
+                dest_folder = ".";
             }
 
             if(dest_filename == undefined){
-                dest_filename = url.path.substr(url.path.lastIndexOf('/')+1);
+                dest_filename = url.path.substr(url.path.lastIndexOf("/")+1);
             }
 
             let dest = dest_folder+"/"+dest_filename;
@@ -159,7 +159,7 @@ module.exports = class CacheServer extends EventEmitter{
                     console.log("Already have file", dest);
                     resolve({
                         url: url.href,
-                        cache_url: this.config.host+':'+this.config.port+'/file/'+dest_filename+'?url='+url.href,
+                        cache_url: this.config.host+":"+this.config.port+"/file/"+dest_filename+"?url="+url.href,
                         dest: dest
                     });
                 }
@@ -168,19 +168,19 @@ module.exports = class CacheServer extends EventEmitter{
 
                     let file = fs.createWriteStream(dest);
 
-                    let downloadProtocol = url.protocol == 'https:' ? https : http;
+                    let downloadProtocol = url.protocol == "https:" ? https : http;
                     let request = downloadProtocol.get(url.href, (response) => {
                         response.pipe(file);
-                        file.on('finish', () => {
+                        file.on("finish", () => {
                             file.close(() => {
                                 resolve({
                                     url: url.href,
-                                    cache_url: this.config.host+':'+this.config.port+'/file/'+dest_filename+'?url='+url.href,
+                                    cache_url: this.config.host+":"+this.config.port+"/file/"+dest_filename+"?url="+url.href,
                                     dest: dest
                                 });
                             });
                         });
-                    }).on('error', (err) => { // Handle errors
+                    }).on("error", (err) => { // Handle errors
                         fs.unlink(dest); // Delete the file async. (But we don't check the result)
                         reject(err.message);
                     });
