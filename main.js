@@ -150,6 +150,10 @@ const createWindow = () => {
         kiosk: playerConfig.kiosk
     });
 
+    if(playerConfig.kiosk){
+        mainWindow.setMenu(null);
+    }
+
     // and load the index.html of the app.
     mainWindow.loadURL("file://"+__dirname+"/loading.html");
 
