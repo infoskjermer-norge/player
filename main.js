@@ -136,7 +136,7 @@ const createWindow = () => {
 
     if(playerConfig.client_id === null) return;
 
-  // Create the browser window.
+    // Create the browser window.
     mainWindow = new BrowserWindow({
         width: 1000,
         height: 700,
@@ -150,7 +150,7 @@ const createWindow = () => {
         kiosk: playerConfig.kiosk
     });
 
-  // and load the index.html of the app.
+    // and load the index.html of the app.
     mainWindow.loadURL("file://"+__dirname+"/loading.html");
 
     mainWindow.on("unresponsive", () => {
@@ -203,7 +203,7 @@ const createWindow = () => {
 
 
 function startHubConnection(){
-  /* Connection to websocket server */
+    /* Connection to websocket server */
     const socket = require("socket.io-client")(config.socket.server);
     socket.on("connect", () => {
         socket.emit("identify", { client_id: playerConfig.client_id, playerInfo: playerInfo });
@@ -228,7 +228,7 @@ function startHubConnection(){
         console.log("private", data);
 
         if(data.type == "restart"){
-      // TODO: Maybe restart the entire app, not just the browser window?
+            // TODO: Maybe restart the entire app, not just the browser window?
             mainWindow.close();
             createWindow();
         }
@@ -288,7 +288,7 @@ function contentHasBeenUpdated(){
     downloadResources(config.server+"/player-electron/"+playerConfig.client_id).then(() => {
         mainWindow.loadURL("file://"+localFileDest+"/player-electron/player.html");
         console.log("Trying to restart the slideshow");
-    // TODO: Maybe we need to just restart the entire window to get the cache events, etc?
+        // TODO: Maybe we need to just restart the entire window to get the cache events, etc?
     }).catch(() => {
         console.log("Couldn't download resources");
     });
@@ -306,13 +306,13 @@ const downloadResources = (playerURL) => {
             }
 
             console.log("Staring to download resources");
-        // --mirror : downloads all the resources needed
-        // -p : This option causes Wget to download all the files that are necessary to properly display a given HTML page. This includes such things as inlined images, sounds, and referenced stylesheets.
-        // --follow-tags=<tag-list>: only get files from these html tags
-        // --domains=<domain-list>: the allowed domains to download from
-        // --no-host-directories: don't create a separate directory for the host
-        // --no-verbose : don't give so much output
-        // --dns-timeout=<seconds> : number of seconds before giving up on resolving the dns
+            // --mirror : downloads all the resources needed
+            // -p : This option causes Wget to download all the files that are necessary to properly display a given HTML page. This includes such things as inlined images, sounds, and referenced stylesheets.
+            // --follow-tags=<tag-list>: only get files from these html tags
+            // --domains=<domain-list>: the allowed domains to download from
+            // --no-host-directories: don't create a separate directory for the host
+            // --no-verbose : don't give so much output
+            // --dns-timeout=<seconds> : number of seconds before giving up on resolving the dns
             let urlObj = URL.parse(playerURL);
             let domains = urlObj.hostname;
             let cmd = "wget -e robots=off --mirror --convert-links -p --no-check-certificate --follow-tags=link,script,style --domains="+domains+" --no-host-directories --no-verbose --dns-timeout=30 -P "+localFileDest+" \""+playerURL+"\"";
@@ -326,7 +326,7 @@ const downloadResources = (playerURL) => {
                     reject(err);
                     return;
                 }
-          //console.log(err, stdout, stderr);
+                //console.log(err, stdout, stderr);
                 console.log("- DONE downloading", playerURL);
                 resolve(playerURL);
                 lastContentFetch = new Date();
