@@ -16,7 +16,7 @@
   "author": "Infoskjermer Norge AS",
   "homepage": "http://infoskjermer-norge.no",
   "devDependencies": {
-    "electron-prebuilt": "^0.37.6"
+    "electron-prebuilt": "^0.37.8"
   },
   "dependencies": {
     "body-parser": "^1.15.0",
