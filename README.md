@@ -2,7 +2,7 @@
 
 ## Install dependencies (Ubuntu)
 1. `sudo apt-get install -y curl wget git`
-2. `curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -`
+2. `curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -`
 3. `sudo apt-get install -y nodejs`
 
 ## Intall app
