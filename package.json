@@ -6,7 +6,8 @@
   "main": "main.js",
   "scripts": {
     "start": "electron main.js",
-    "config": "electron main.js --config"
+    "config": "electron main.js --config",
+    "update-player": "./update-script.sh"
   },
   "repository": {
     "type": "git",
