@@ -71,8 +71,6 @@ module.exports = class CacheServer extends EventEmitter{
                 for(let i = 0; i < results.length; i++){
                     cachedFiles[results[i].url] = results[i];
                 }
-                //console.log("all cached files: ", cachedFiles);
-
 
                 this.emit("cache-finished", cachedFiles);
 
@@ -102,12 +100,10 @@ module.exports = class CacheServer extends EventEmitter{
             let fileName = req.params.name;
             res.sendFile(fileName, options, (err) => {
                 if (err) {
-                    //console.log(err);
                     this.emit("cache-hit", { error: err, fileName });
                     res.status(err.status).end();
                 }
                 else {
-                    //console.log('Sent:', fileName);
                     this.emit("cache-hit", { error: null, fileName });
                 }
             });
@@ -117,14 +113,7 @@ module.exports = class CacheServer extends EventEmitter{
 
 
     start(){
-        /*
-        this.server = https.createServer({
-              key: fs.readFileSync('key.pem'),
-              cert: fs.readFileSync('cert.pem')
-            }, this.app).listen(this.config.port);
-        */
         this.server = http.createServer(this.app).listen(this.config.port);
-
         return Promise.resolve();
     }
 
@@ -169,7 +158,7 @@ module.exports = class CacheServer extends EventEmitter{
                     let file = fs.createWriteStream(dest);
 
                     let downloadProtocol = url.protocol == "https:" ? https : http;
-                    let request = downloadProtocol.get(url.href, (response) => {
+                    downloadProtocol.get(url.href, (response) => {
                         response.pipe(file);
                         file.on("finish", () => {
                             file.close(() => {
