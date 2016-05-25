@@ -118,17 +118,17 @@ if (shouldQuit) {
 */
 
 cacheServer.on("cache-start", () => {
-    console.log("cache-start");
+    //console.log("cache-start");
 });
 cacheServer.on("cache-finished", (files) => {
     console.log("cache-finished");
     mainWindow.webContents.executeJavaScript("cacheFinishedEvent("+JSON.stringify(files)+");");
 });
 cacheServer.on("cache-failed", () => {
-    console.log("cache-failed");
+    //console.log("cache-failed");
 });
 cacheServer.on("cache-hit", () => {
-    console.log("cache-hit");
+    //console.log("cache-hit");
 });
 
 
@@ -136,7 +136,6 @@ const createWindow = () => {
 
     if(playerConfig.client_id === null) return;
 
-    // Create the browser window.
     mainWindow = new BrowserWindow({
         width: 1000,
         height: 700,
@@ -154,7 +153,6 @@ const createWindow = () => {
         mainWindow.setMenu(null);
     }
 
-    // and load the index.html of the app.
     mainWindow.loadURL("file://"+__dirname+"/loading.html");
 
     mainWindow.on("unresponsive", () => {
@@ -176,15 +174,6 @@ const createWindow = () => {
     });
 
 
-
-
-
-    mainWindow.webContents.on("did-finish-load", function() {
-    /*mainWindow.webContents.executeJavaScript('returnSomething();', false, (ret) => {
-      console.log("did we get something? ", ret);
-    });*/
-    });
-
     if(playerConfig.devtools){
         mainWindow.webContents.openDevTools();
     }
@@ -194,10 +183,10 @@ const createWindow = () => {
     });
 
     downloadResources(config.server+"/player-electron/"+playerConfig.client_id).then(() => {
-        console.log("Should start the player");
+        //console.log("Should start the player");
         mainWindow.loadURL("file://"+localFileDest+"/player-electron/player.html");
     }).catch(() => {
-        console.log("-------- don't have internet");
+        //console.log("-------- don't have internet");
         mainWindow.loadURL("file://"+localFileDest+"/player-electron/player.html");
     });
 };
@@ -228,8 +217,6 @@ function startHubConnection(){
         });
     });
     socket.on("private", (data) => {
-
-        console.log("private", data);
 
         if(data.type == "restart"){
             // TODO: Maybe restart the entire app, not just the browser window?
@@ -322,7 +309,6 @@ const downloadResources = (playerURL) => {
             let cmd = "wget -e robots=off --mirror --convert-links -p --no-check-certificate --follow-tags=link,script,style --domains="+domains+" --no-host-directories --no-verbose --dns-timeout=30 -P "+localFileDest+" \""+playerURL+"\"";
             let playerFile = urlObj.pathname.substr(urlObj.pathname.lastIndexOf("/")+1);
             cmd += "; mv "+localFileDest+"/player-electron/"+playerFile+" "+localFileDest+"/player-electron/player.html";
-            console.log("running cmd: ", cmd);
             exec(cmd, (err, stdout, stderr) => {
                 if (err) {
                     console.error("Something went wrong", err);
@@ -330,7 +316,6 @@ const downloadResources = (playerURL) => {
                     reject(err);
                     return;
                 }
-                //console.log(err, stdout, stderr);
                 console.log("- DONE downloading", playerURL);
                 resolve(playerURL);
                 lastContentFetch = new Date();
