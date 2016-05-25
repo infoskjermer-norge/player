@@ -6,7 +6,7 @@
 3. `sudo apt-get install -y nodejs`
 
 ## Intall app
-1. `git clone https://github.com/christofferok/infoskjermer-player.git` Clone repo
+1. `git clone https://github.com/infoskjermer-norge/player.git` Clone repo
 2. `cd infoskjermer-player`
 3. `npm install` to install the dependencies
 
