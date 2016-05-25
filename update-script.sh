@@ -1,9 +1,17 @@
 #!/bin/bash
 
-echo "Running the update script"
+echo ""
+echo ""
+echo "*** Starting the update script ***"
+echo ""
 
-#git pull origin master
-#npm install
+echo "- Fetching newest code"
+git pull origin master
 
+echo "- Installing dependencies"
+npm install
 
-echo "Finished with the update script"
+echo ""
+echo ""
+echo "*** Finished with the update script ***"
+echo ""
