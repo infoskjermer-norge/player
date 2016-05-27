@@ -14,7 +14,7 @@ if [[ $? -eq 0 ]]; then
         echo "- Installing dependencies"
         npm install
 else
-        echo "We are offline"
+        echo "We are offline. Not going to perform any update actions"
 fi
 
 echo ""
