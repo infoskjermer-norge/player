@@ -5,7 +5,7 @@
     <title>Config</title>
     <script type="text/javascript">
     const config = require('./config.json');
-    const remote = require('remote');
+    const remote = require('electron').remote;
     const app = remote.app;
     const fs = require('fs');
     const storageDir = app.getPath('home') + '/' + config.storageDir;
