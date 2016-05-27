@@ -17,5 +17,5 @@
 
 ## Run app
 1. `cd infoskjermer-player`
-2. `npm run config` or `electron main.js --config` to configure the player
-3. `npm start` or `electron main.js` to run the app
+2. `npm run config` to configure the player
+3. `npm start` to run the app
