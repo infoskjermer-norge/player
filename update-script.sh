@@ -5,11 +5,17 @@ echo ""
 echo "*** Starting the update script ***"
 echo ""
 
-echo "- Fetching newest code"
-git pull origin master
+wget -q --tries=10 --timeout=20 --spider http://google.com
+if [[ $? -eq 0 ]]; then
+        echo "We are online"
+        echo "- Fetching newest code"
+        git pull origin master
 
-echo "- Installing dependencies"
-npm install
+        echo "- Installing dependencies"
+        npm install
+else
+        echo "We are offline"
+fi
 
 echo ""
 echo ""
