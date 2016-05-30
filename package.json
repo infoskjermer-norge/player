@@ -7,7 +7,9 @@
   "scripts": {
     "start": "electron main.js",
     "config": "electron main.js --config",
-    "update-player": "./update-script.sh"
+    "update-player": "electron update.js",
+    "update-player-silent": "electron update.js --silent",
+    "update-player-raw": "./update-script.sh"
   },
   "repository": {
     "type": "git",
