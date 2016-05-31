@@ -33,6 +33,7 @@ echo -e '[Desktop Entry]\nType=Application\nExec=/home/player/infoskjermer-playe
 # Set up config file if there is a client id passed in
 if [ $1 ]; then
   if [ $1 ]; then
+      mkdir ~/infoskjermer-player-files
       printf '{\n"server": "",\n"client_id": "%s",\n"kiosk": true,\n"devtools": false\n}' $1 > ~/infoskjermer-player-files/config.json
   fi
 fi
