@@ -27,4 +27,4 @@ npm install
 rm ~/.config/autostart/*.desktop
 
 # Create a startup script
-echo '[Desktop Entry]\nType=Application\nExec=~/infoskjermer-player/startup-script.sh\nHidden=false\nNoDisplay=false\nX-GNOME-Autostart-enabled=true\nName=Infoskjermer Player\nComment=Start the Infoskjermer Player' > ~/.config/autostart/infoscreen-player.desktop
+echo -e '[Desktop Entry]\nType=Application\nExec=~/infoskjermer-player/startup-script.sh\nHidden=false\nNoDisplay=false\nX-GNOME-Autostart-enabled=true\nName=Infoskjermer Player\nComment=Start the Infoskjermer Player' > ~/.config/autostart/infoscreen-player.desktop
