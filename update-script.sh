@@ -9,7 +9,7 @@ wget -q --tries=10 --timeout=20 --spider http://google.com
 if [[ $? -eq 0 ]]; then
         echo "We are online"
         echo "- Fetching newest code"
-        git pull origin master
+        git pull origin production
 
         echo "- Installing dependencies"
         npm install

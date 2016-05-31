@@ -3,7 +3,7 @@
 
 ## Automatic install
 
-1. `curl -o install-script.sh https://raw.githubusercontent.com/infoskjermer-norge/player/master/install-script-existing.sh; chmod +x install-script.sh;`
+1. `curl -o install-script.sh https://raw.githubusercontent.com/infoskjermer-norge/player/production/install-script-existing.sh; chmod +x install-script.sh;`
 2. `./install-script.sh <player_id>`
 3. `rm install-script.sh`
 
@@ -21,7 +21,7 @@
 
 ### Update app
 1. `cd infoskjermer-player`
-2. `git pull origin master` to get newest code
+2. `git pull origin production` to get newest code
 3. `npm install` to install the dependencies
 
 ### Run app
