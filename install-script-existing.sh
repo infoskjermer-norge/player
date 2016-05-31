@@ -27,4 +27,12 @@ npm install
 rm ~/.config/autostart/*.desktop
 
 # Create a startup script
-echo -e '[Desktop Entry]\nType=Application\nExec=~/infoskjermer-player/startup-script.sh\nHidden=false\nNoDisplay=false\nX-GNOME-Autostart-enabled=true\nName=Infoskjermer Player\nComment=Start the Infoskjermer Player' > ~/.config/autostart/infoscreen-player.desktop
+echo -e '[Desktop Entry]\nType=Application\nExec=/home/player/infoskjermer-player/startup-script.sh\nHidden=false\nNoDisplay=false\nX-GNOME-Autostart-enabled=true\nName=Infoskjermer Player\nComment=Start the Infoskjermer Player' > ~/.config/autostart/infoscreen-player.desktop
+
+
+# Set up config file if there is a client id passed in
+if [ $1 ]; then
+  if [ $1 ]; then
+      printf '{\n"server": "",\n"client_id": "%s",\n"kiosk": true,\n"devtools": false\n}' $1 > ~/infoskjermer-player-files/config.json
+  fi
+fi
