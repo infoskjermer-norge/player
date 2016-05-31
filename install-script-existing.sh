@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Open up for updates
-sed -i 's/# deb http/deb http/g' /etc/apt/sources.list
-sed -i 's/# deb-src/deb-src/g' /etc/apt/sources.list
+sudo sed -i 's/# deb http/deb http/g' /etc/apt/sources.list
+sudo sed -i 's/# deb-src/deb-src/g' /etc/apt/sources.list
 
 # Install dependencies
 sudo apt-get update
@@ -14,8 +14,8 @@ sudo apt-get update
 sudo apt-get install -y nodejs
 
 # Turn off updates again
-sed -i 's/deb http/# deb http/g' /etc/apt/sources.list
-sed -i 's/deb-src/# deb-src/g' /etc/apt/sources.list
+sudo sed -i 's/deb http/# deb http/g' /etc/apt/sources.list
+sudo sed -i 's/deb-src/# deb-src/g' /etc/apt/sources.list
 
 # Change into the directory we want to install the player
 cd ~
