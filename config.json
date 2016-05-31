@@ -1,7 +1,7 @@
 {
-    "server": "https://dev.infoskjermer-norge.no",
+    "server": "https://app.infoskjermer-norge.no",
     "socket": {
-        "server": "https://dev.infoskjermer-norge.no:3000"
+        "server": "https://app.infoskjermer-norge.no:3000"
     },
     "cache": {
         "host": "http://localhost",
