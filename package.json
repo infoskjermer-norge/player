@@ -9,7 +9,8 @@
     "config": "electron main.js --config",
     "update-player": "electron update.js",
     "update-player-silent": "electron update.js --silent",
-    "update-player-raw": "./update-script.sh"
+    "update-player-raw": "./update-script.sh",
+    "config-set": "electron config-set.js"
   },
   "repository": {
     "type": "git",
