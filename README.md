@@ -28,3 +28,14 @@
 1. `cd infoskjermer-player`
 2. `npm run config` to configure the player
 3. `npm start` to run the app
+
+## Change config from terminal
+If you want to change a config value from the terminal run:
+
+`npm run config-set <key> <value>`
+
+examples:
+
+`npm run config-set client_id YOUR_CLIENT_ID`
+`npm run config-set kiosk true`
+`npm run config-set devtools false`
