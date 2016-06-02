@@ -71,6 +71,7 @@ app.on("ready", () => {
 
         // If player server har been overrided
         if(playerConfig.server) config.server = playerConfig.server;
+        if(playerConfig.socket_server) config.socket.server = playerConfig.socket_server;
 
         const electronScreen = electron.screen;
 
