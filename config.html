@@ -21,6 +21,7 @@
 
     document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('player_server').value = playerConfig.server || '';
+        document.getElementById('player_socket_server').value = playerConfig.socket_server || '';
         document.getElementById('player_client_id').value = playerConfig.client_id || '';
         document.getElementById('player_kiosk').checked = playerConfig.kiosk;
         document.getElementById('player_devtools').checked = playerConfig.devtools;
@@ -28,6 +29,7 @@
 
     function saveConfig(){
         playerConfig.server = document.getElementById('player_server').value;
+        playerConfig.socket_server = document.getElementById('player_socket_server').value;
         playerConfig.client_id = document.getElementById('player_client_id').value;
         playerConfig.kiosk = document.getElementById('player_kiosk').checked;
         playerConfig.devtools = document.getElementById('player_devtools').checked;
@@ -63,6 +65,9 @@
     <h1>Config</h1>
     <p>
         <input id="player_server" type="text" placeholder="Server if you want to override default" value="">
+    </p>
+    <p>
+        <input id="player_socket_server" type="text" placeholder="Socket server if you want to override default" value="">
     </p>
     <p>
         <input id="player_client_id" type="text" placeholder="Client ID" value="">
