@@ -221,7 +221,7 @@ function startHubConnection(){
 
         if(data.type == "restart"){
             // TODO: Maybe restart the entire app, not just the browser window?
-            mainWindow.close();
+            if(mainWindow) mainWindow.close();
             createWindow();
         }
         else if(data.type == "updated_content"){
