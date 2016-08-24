@@ -13,6 +13,7 @@ sudo apt-get install -y nodejs
 cd ~
 git clone https://github.com/infoskjermer-norge/player.git infoskjermer-player
 cd infoskjermer-player
+git checkout -b production origin/production
 npm install
 
 # Create a startup script

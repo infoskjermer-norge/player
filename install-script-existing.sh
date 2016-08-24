@@ -19,6 +19,7 @@ sudo sed -i 's/deb-src/# deb-src/g' /etc/apt/sources.list
 cd ~
 git clone https://github.com/infoskjermer-norge/player.git infoskjermer-player
 cd infoskjermer-player
+git checkout -b production origin/production
 npm install
 
 # Delete existing startu-scripts
