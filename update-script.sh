@@ -10,6 +10,7 @@ if [[ $? -eq 0 ]]; then
         echo "We are online"
         echo "- Fetching newest code"
         git pull origin production
+        git checkout production
 
         echo "- Installing dependencies"
         npm install
