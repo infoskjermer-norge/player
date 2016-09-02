@@ -194,13 +194,21 @@ const createWindow = () => {
 
 
 
+function sendPlayerInfo(socket){
+    socket.emit("identify", { client_id: playerConfig.client_id, playerInfo: playerInfo });
+}
 
 
 function startHubConnection(){
     /* Connection to websocket server */
     const socket = require("socket.io-client")(config.socket.server);
     socket.on("connect", () => {
-        socket.emit("identify", { client_id: playerConfig.client_id, playerInfo: playerInfo });
+        getDiskusage().then(data => {
+            playerInfo.diskusage = data;
+            sendPlayerInfo(socket);
+        }).catch(() => {
+            sendPlayerInfo(socket);
+        });
     });
     socket.on("disconnect", () => {
         console.log("Disconnected from the hub");
@@ -327,3 +335,25 @@ const downloadResources = (playerURL) => {
 
     });
 };
+
+
+// Get the disk usage 
+function getDiskusage() {
+    return new Promise((resolve, reject) => {
+        exec("df -h /", (error, stdout) => {
+            if(error) reject(error);
+
+            let out = stdout.split("\n");
+            if(out[1]){
+                let parts = out[1].replace(/ +/g, " ").split(" ");
+                resolve({
+                    size: parts[1],
+                    used: parts[2],
+                    available: parts[3],
+                    capacity: parts[4]});
+            }
+
+            reject(new Error("Could not parse the diskusage output"));
+        });
+    });
+}
