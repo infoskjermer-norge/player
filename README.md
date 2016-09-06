@@ -1,5 +1,8 @@
 # Infoskjermer Norge Player
 
+[![Dependency Status](https://david-dm.org/infoskjermer-norge/player/status.svg)](https://david-dm.org/infoskjermer-norge/player)
+[![devDependency Status](https://david-dm.org/infoskjermer-norge/player/dev-status.svg)](https://david-dm.org/infoskjermer-norge/player?type=dev)
+
 
 ## Automatic install
 
