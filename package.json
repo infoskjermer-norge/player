@@ -20,7 +20,7 @@
   "author": "Infoskjermer Norge AS",
   "homepage": "http://infoskjermer-norge.no",
   "devDependencies": {
-    "electron": "1.3.5"
+    "electron": "1.4.3"
   },
   "dependencies": {
     "body-parser": "1.15.2",
